@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { InputData, EvaluationData } from "@/types/evaluation";
-import data from '../../data.ts';
+import axios from "axios";
+
 interface FileUploadProps {
   onDataUpload: (data: EvaluationData[]) => void;
   isLoading: boolean;
@@ -39,22 +40,23 @@ export function FileUpload({ onDataUpload, isLoading }: FileUploadProps) {
           "Invalid input format: Missing required fields (prompt_id, prompt, response, agent_id)"
         );
       }
-
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/evaluate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputData),
-      });
+      const response = await axios.post(
+        `${backendUrl}/evaluate`,
+        inputData,
+        {
+          headers: {
+        "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error(`Backend error: ${response.statusText}`);
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Backend error: ${response.status}`);
       }
 
-      const result = await response.json();
-      const evaluationData = result as EvaluationData[];
+      const evaluationData = response.data as EvaluationData[];
 
       // Validate that backend returned complete evaluation data
       const requiredOutputFields = [

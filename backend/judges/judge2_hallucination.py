@@ -1,17 +1,44 @@
+import os
+import warnings
+from dotenv import load_dotenv
+from huggingface_hub import login
 from ddgs import DDGS
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from sentence_transformers import CrossEncoder
 import torch
 import numpy as np
 
+# Load environment and login BEFORE trying to load models
+load_dotenv()
+warnings.filterwarnings("ignore")
+hf_token = os.getenv("HF_TOKEN")
+if hf_token:
+    print("judges-2: Logging into Hugging Face Hub...")
+    login(token=hf_token)
+    print("judges-2: Login successful.")
+else:
+    print("judges-2: No HF token found. Some models may not load.")
+
+# Initialize variables to None to avoid NameError if loading fails
+nli_tokenizer = None
+nli_model = None
+cross_encoder = None
+
 try:
-    nli_tokenizer = AutoTokenizer.from_pretrained("MoritzLaurer/DeBERTa-v3-base-mnli")
+    print("judges-2: Loading models...")
+    # Force use of slow tokenizer to avoid tiktoken issues
+    nli_tokenizer = AutoTokenizer.from_pretrained("MoritzLaurer/DeBERTa-v3-base-mnli", use_fast=False)
     nli_model = AutoModelForSequenceClassification.from_pretrained("MoritzLaurer/DeBERTa-v3-base-mnli")
     cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
-    print(" judges-2 loaded successfully.")
+    print("judges-2: Models loaded successfully")
 except Exception as e:
+    print(f"judges-2 Error: {e}")
+    import traceback
+    traceback.print_exc()
+    # Ensure variables are None if loading fails
+    nli_tokenizer = None
     nli_model = None
-    print(f" Could not load judges-2 models. Error: {e}")
+    cross_encoder = None
 
 
 def get_top_snippets(query, num_results=5):
