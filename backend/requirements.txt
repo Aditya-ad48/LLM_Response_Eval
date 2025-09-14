@@ -1,0 +1,9 @@
+torch
+transformers
+sentence-transformers
+numpy
+pandas
+ddgs
+accelerate
+google-generativeai
+python-dotenv
