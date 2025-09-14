@@ -13,10 +13,9 @@ app.url_map.strict_slashes = False  # Disable automatic trailing slash redirects
 
 print("CLIENT_URI:", os.getenv("CLIENT_URI"))
 
-# Enable CORS - Allow all origins for now
 cors_options = {
     "supports_credentials": True,
-    "origins": "*",
+    "origins": os.getenv("CLIENT_URI"),
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }
 CORS(app, **cors_options)
