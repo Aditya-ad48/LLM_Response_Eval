@@ -42,11 +42,11 @@ export function FileUpload({ onDataUpload, isLoading }: FileUploadProps) {
       }
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.post(
-        `${backendUrl}/evaluate`,
+        `${backendUrl}/evaluate/`, // Add trailing slash
         inputData,
         {
           headers: {
-        "Content-Type": "application/json",
+            "Content-Type": "application/json",
           },
           withCredentials: true,
         }

@@ -6,22 +6,22 @@ from routes.index import eval_blueprint
 from config import Config
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False  # Disable automatic trailing slash redirects
 
 print("CLIENT_URI:", os.getenv("CLIENT_URI"))
 
-# cors_options = {
-#     "supports_credentials": True,
-#     "origins": [f"{os.getenv('CLIENT_URI')}"],
-#     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-# }
-# CORS(app, **cors_options)
+# Enable CORS - Allow all origins for now
+cors_options = {
+    "supports_credentials": True,
+    "origins": "*",
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}
+CORS(app, **cors_options)
 
 app.config.from_object(Config)
-
 Session(app)
 
 app.register_blueprint(eval_blueprint, url_prefix="/api/evaluate")

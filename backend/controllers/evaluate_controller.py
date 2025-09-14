@@ -32,10 +32,10 @@ def evaluate_agent_response(prompt: str, response: str):
     coherence_score = get_coherence_score(prompt, response)
 
     report = {
-        "instruction_score_J1": round(instruction_score, 4) if instruction_score is not None else "N/A",
-        "coherence_score_J3": round(coherence_score, 4),
-        "is_hallucination_J2": is_hallucination,
-        "nli_prediction_J2": nli_verdict
+        "instruction_score": round(instruction_score, 4) if instruction_score is not None else "N/A",
+        "coherence_score": round(coherence_score, 4),
+        "is_hallucination": is_hallucination,
+        "nli_prediction": nli_verdict
     }
     return report
 
