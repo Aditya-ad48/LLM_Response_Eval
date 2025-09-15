@@ -27,3 +27,4 @@ ddgs
 tqdm
 docx2txt
 Flask
+gunicorn
